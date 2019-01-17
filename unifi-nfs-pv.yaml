@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: nfs
+  namespace: unifi
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs
+  nfs:
+    server: synology2
+    path: "/volume1/K8S/"
+    readOnly: false
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-nolock
+  namespace: unifi
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-nolock
+  mountOptions:
+    - bg
+    - nolock
+    - noatime
+  nfs:
+    server: synology2
+    path: "/volume1/K8S/"
+    readOnly: false

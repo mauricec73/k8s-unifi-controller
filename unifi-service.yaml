@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "unifi"
+  labels:
+    run: unifi-controller
+  name: unifi-svc-tcp
+  namespace: unifi
+spec:
+  ports:
+  - port: 6789
+    protocol: TCP
+    targetPort: 6789
+    name: port-6789
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+    name: port-8080
+  - port: 8443
+    protocol: TCP
+    targetPort: 8443
+    name: port-8443
+  - port: 8843
+    protocol: TCP
+    targetPort: 8843
+    name: port-8843
+  - port: 8880
+    protocol: TCP
+    targetPort: 8880
+    name: port-8880
+  selector:
+    run: unifi-controller
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.60
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "unifi"
+  labels:
+    run: unifi-controller
+  name: unifi-svc-udp
+  namespace: unifi
+spec:
+  ports:
+  - port: 3478
+    protocol: UDP
+    targetPort: 3478
+    name: port-3478
+  - port: 10001
+    protocol: UDP
+    targetPort: 10001
+    name: port-10001
+  selector:
+    run: unifi-controller
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.60
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "unifi"
+  labels:
+    run: mongodb
+  name: unifi-svc-mongodb
+  namespace: unifi
+spec:
+  ports:
+  - port: 27017
+    protocol: TCP
+    targetPort: 27017
+    name: port-27017
+  selector:
+    run: mongodb
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.60

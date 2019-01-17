@@ -1,0 +1,104 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: unifi-controller
+  namespace: unifi
+  labels:
+    run: unifi-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: unifi-controller
+  template:
+    metadata:
+      labels:
+        run: unifi-controller
+    spec:
+      hostname: unifi-controller
+      containers:
+      - name: unifi
+        image: jacobalberty/unifi:latest
+        env:
+          - name: JVM_MAX_THREAD_STACK_SIZE
+            value: "1280k"
+          - name: RUNAS_UID0
+            value: "false"
+          - name: TZ
+            value: "Europe/Amsterdam"
+          - name: DB_URI
+            value: "mongodb://unifi-svc-mongodb.unifi.svc.cluster.local/unifi"
+          - name: STATDB_URI
+            value: "mongodb://unifi-svc-mongodb.unifi.svc.cluster.local/unifi_stat"
+          - name: DB_NAME
+            value: "unifi"
+        ports:
+          - containerPort: 6789
+            protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          - containerPort: 8843
+            protocol: TCP
+          - containerPort: 8880
+            protocol: TCP
+          - containerPort: 3478
+            protocol: UDP
+          - containerPort: 10001
+            protocol: UDP
+        volumeMounts:
+          - name: unifi
+            mountPath: /unifi/data
+            subPath: unifi-data
+          - name: unifi
+            mountPath: /unifi/log
+            subPath: unifi-log
+          - name: unifi
+            mountPath: /unifi/cert
+            subPath: unifi-cert
+          - name: unifi
+            mountPath: /unifi/init.d
+            subPath: unifi-init
+      volumes:
+        - name: unifi
+          persistentVolumeClaim:
+            claimName: unifi-pvc
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: unifi
+  labels:
+    run: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: mongodb
+  template:
+    metadata:
+      labels:
+        run: mongodb
+    spec:
+      hostname: mongodb
+      containers:
+      - name: mongodb
+        image: mongo:latest
+        command:
+        - "mongod"
+        - "--bind_ip"
+        - "0.0.0.0"
+        ports:
+          - containerPort: 27017
+            protocol: TCP
+        volumeMounts:
+          - name: unifi
+            mountPath: /data/db
+            subPath: mongodb-data
+      volumes:
+        - name: unifi
+          persistentVolumeClaim:
+            claimName: unifi-pvc-mongodb
+
