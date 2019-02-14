@@ -50,16 +50,16 @@ spec:
         volumeMounts:
           - name: unifi
             mountPath: /unifi/data
-            subPath: unifi-data
+            subPath: unifi/data
           - name: unifi
             mountPath: /unifi/log
-            subPath: unifi-log
+            subPath: unifi/log
           - name: unifi
             mountPath: /unifi/cert
-            subPath: unifi-cert
+            subPath: unifi/cert
           - name: unifi
             mountPath: /unifi/init.d
-            subPath: unifi-init
+            subPath: unifi/init
       volumes:
         - name: unifi
           persistentVolumeClaim:
@@ -96,7 +96,7 @@ spec:
         volumeMounts:
           - name: unifi
             mountPath: /data/db
-            subPath: mongodb-data
+            subPath: unifi/mongodb-data
       volumes:
         - name: unifi
           persistentVolumeClaim:
